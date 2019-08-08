@@ -2,6 +2,10 @@ import selectExpenses from "../../selectors/expenses";
 import moment from "moment";
 import expenses from "../fixtures/expenses";
 
+beforeEach(() => {
+
+});
+
 test("should filter by text value", () => {
   const filters = {
     text: "e",
