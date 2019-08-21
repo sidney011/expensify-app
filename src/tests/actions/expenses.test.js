@@ -129,24 +129,25 @@ store.dispatch(startSetExpenses()).then(() => {
 
 test('should remove expenses from firebase', (done) => {
   const store = createMockStore({});
-  store.dispatch(startRemoveExpense( { id: expenses[0].id } )).then(() => {
+  const id = expenses[1].id;
+  store.dispatch(startRemoveExpense( { id } )).then(() => {
     const actions = store.getActions();
     expect(actions[0]).toEqual({
       type: 'REMOVE_EXPENSE',
-      id: expenses[0].id
+      id
     });
     return database.ref(`expenses/${id}`).once('value');
   }).then((snapshot) => {
     expect(snapshot.val()).toBeFalsy();
+    done();
   });
-  done();
+  
 });
 
 test('should edit expenses from firebase', (done) => {
   const store = createMockStore({});
   const id = expenses[0].id;
   const updates = {
-    description: "New Description",
     amount: 12367
   };
   store.dispatch(startEditExpense(id, updates)).then(() => {
@@ -158,10 +159,9 @@ test('should edit expenses from firebase', (done) => {
     });
     return database.ref(`expenses/${id}`).once('value');
   }).then((snapshot) => {
-    expect(snapshot.val()).toBe({
-      ...expense[0],
-      ...updates
-    });
+    expect(snapshot.val().amount).toBe(
+      updates.amount
+    );
   });
   done();
 });
